@@ -1,0 +1,38 @@
+name: Cloudflare Deployment
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  deploy:
+    name: Deploy
+    environment: Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Types
+        run: pnpm run cf:gen
+
+      - name: Build Project
+        run: pnpm run cf:build
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          accountId: ${{ secrets.CLOUDFLARE_ID }}
+          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
+          command: deploy

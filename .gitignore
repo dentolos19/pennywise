@@ -1,22 +1,22 @@
-# IDE configurations
+# Editor configurations
 .vs/
 .idea/
 
-# Environment files
+# Project files
 node_modules/
+*.d*
 
-# Output files
-build/
-dist/
-out/
+# User files
+.env*
+!.env*.template
 
-# Output files: Next.js
+# Other files: Next.js
 .vercel/
 .next/
-next-env.d.ts
+.open-next/
 
-# User-specific files
-.env*.local
+# Other files: Cloudflare
+.wrangler/
 
 # Miscellaneous files
 .DS_Store

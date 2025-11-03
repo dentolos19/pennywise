@@ -2,18 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Production",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "pnpm build && pnpm start",
-      "serverReadyAction": {
-        "pattern": "Local:.+(https?://.+)",
-        "uriFormat": "%s",
-        "action": "openExternally"
-      }
-    },
-    {
-      "name": "Development",
+      "name": "Debug",
       "type": "node-terminal",
       "request": "launch",
       "command": "pnpm dev",
