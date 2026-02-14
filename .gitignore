@@ -2,23 +2,25 @@
 .vs/
 .idea/
 
-# Project files
+# Build files
+.next/
+.open-next/
+.wrangler/
 node_modules/
-*.d*
+dist/
+build/
+out/
+coverage/
+*.tsbuildinfo
+*.d.ts
 
 # User files
 .env*
 !.env*.template
 
-# Other files: Next.js
-.vercel/
-.next/
-.open-next/
-
-# Other files: Cloudflare
-.wrangler/
-
 # Miscellaneous files
+.tmp/
 .DS_Store
 Desktop.ini
 Thumbs.db
+!.gitkeep

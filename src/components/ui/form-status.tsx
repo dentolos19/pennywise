@@ -7,10 +7,10 @@ function FormStatus(props: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
 
   const activeComponent = React.Children.toArray(props.children).find(
-    (child) => React.isValidElement(child) && child.type === FormStatus.Active
+    (child) => React.isValidElement(child) && child.type === FormStatus.Active,
   );
   const pendingComponent = React.Children.toArray(props.children).find(
-    (child) => React.isValidElement(child) && child.type === FormStatus.Pending
+    (child) => React.isValidElement(child) && child.type === FormStatus.Pending,
   );
 
   if (pending) return pendingComponent;

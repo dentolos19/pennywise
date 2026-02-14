@@ -1,5 +1,7 @@
-import AppProvider from "@/components/app-provider";
 import type { Metadata } from "next";
+
+import AppProvider from "@/components/app-provider";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
