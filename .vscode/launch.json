@@ -2,10 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug",
-      "type": "node-terminal",
+      "name": "App",
       "request": "launch",
-      "command": "pnpm dev",
+      "type": "node-terminal",
+      "command": "just start",
+      "preLaunchTask": "Setup",
       "serverReadyAction": {
         "pattern": "Local:.+(https?://.+)",
         "uriFormat": "%s",

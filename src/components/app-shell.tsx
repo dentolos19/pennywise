@@ -1,8 +1,5 @@
 "use client";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import LoadingView from "@/components/views/loading-view";
-import LoginView from "@/components/views/login-view";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ForumIcon from "@mui/icons-material/Forum";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -27,6 +24,10 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+
+import { useAuth } from "@/components/contexts/auth-context";
+import LoadingView from "@/components/views/loading-view";
+import LoginView from "@/components/views/login-view";
 
 const links = [
   {
@@ -69,7 +70,7 @@ export default function AppShell(props: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   if (auth.loading) return <LoadingView />;
-  if (!auth.user || !auth.userInfo) return <LoginView />;
+  if (!auth.user) return <LoginView />;
 
   const handleNavigate = (href: string) => {
     setOpen(false);
@@ -77,7 +78,7 @@ export default function AppShell(props: { children: React.ReactNode }) {
   };
 
   return (
-    <Box className={"h-full flex"}>
+    <Box className={"flex h-full"}>
       <AppBar className={"z-20"}>
         <Toolbar>
           <Box>
@@ -104,7 +105,7 @@ export default function AppShell(props: { children: React.ReactNode }) {
           </Box>
           <Box className={"flex-1"} />
           <Box>
-            <Chip label={`${auth.userInfo.points} Points`} />
+            <Chip label={`${auth.user.points} Points`} />
           </Box>
         </Toolbar>
       </AppBar>
@@ -145,7 +146,7 @@ export default function AppShell(props: { children: React.ReactNode }) {
           ))}
         </List>
       </Drawer>
-      <Box className={"flex-1 grid grid-rows-[auto,1fr]"}>
+      <Box className={"grid flex-1 grid-rows-[auto,1fr]"}>
         <Toolbar />
         {props.children}
       </Box>

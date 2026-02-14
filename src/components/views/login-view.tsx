@@ -1,8 +1,9 @@
+import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
+import { useState } from "react";
+
 import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import FormStatus from "@/components/ui/form-status";
-import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
-import { useState } from "react";
 
 export default function LoginView() {
   const auth = useAuth();
@@ -41,11 +42,11 @@ export default function LoginView() {
   };
 
   return (
-    <Box className={"size-full grid place-items-center"}>
-      <Paper className={"p-8 w-96"} variant={"outlined"}>
+    <Box className={"grid size-full place-items-center"}>
+      <Paper className={"w-96 p-8"} variant={"outlined"}>
         {phase === "login" && (
           <Box component={"form"} className={"flex flex-col gap-4"} action={handleLogin}>
-            <Typography className={"font-bold text-2xl text-center"}>Welcome back!</Typography>
+            <Typography className={"text-center text-2xl font-bold"}>Welcome back!</Typography>
             <Box className={"flex flex-col gap-2"}>
               <TextField
                 variant={"filled"}
@@ -90,7 +91,7 @@ export default function LoginView() {
         )}
         {phase === "register" && (
           <Box component={"form"} className={"flex flex-col gap-4"} action={handleRegister}>
-            <Typography className={"font-bold text-2xl text-center"}>Hello there!</Typography>
+            <Typography className={"text-center text-2xl font-bold"}>Hello there!</Typography>
             <Box className={"flex flex-col gap-2"}>
               <TextField
                 variant={"filled"}
