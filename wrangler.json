@@ -2,9 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "pennywise",
   "main": ".open-next/worker.js",
-  "compatibility_date": "2026-01-01",
+  "account_id": "d910f54eba4cf3d1634aa41c3d9a93bc",
+  "compatibility_date": "2026-05-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  "keep_vars": true,
+  "logpush": true,
   "observability": {
     "logs": {
       "enabled": true
@@ -17,10 +18,8 @@
     "binding": "ASSETS",
     "directory": ".open-next/assets"
   },
-  "routes": [
-    {
-      "pattern": "pennywise.dennise.me",
-      "custom_domain": true
-    }
-  ]
+  "route": {
+    "pattern": "pennywise.dennise.me",
+    "custom_domain": true
+  }
 }

@@ -1,15 +1,18 @@
 # Editor configurations
 .vs/
 .idea/
+*.iml
 
 # Environment files
-.vercel/
 .next/
 .open-next/
 .wrangler/
-.convex/
 node_modules/
-*.d*
+dist/
+build/
+out/
+*.d.ts
+*.tsbuildinfo
 
 # User files
 .env*

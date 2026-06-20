@@ -1,15 +1,35 @@
 "use client";
 
-import { getUser, loginUser, logoutUser, registerUser } from "@/lib/auth";
-import { User, UserInfo, UserInfoDocument } from "@/lib/integrations/appwrite/types";
-import { Models } from "appwrite";
 import { createContext, useContext, useEffect, useState } from "react";
+
+import { authClient } from "@/lib/auth-client";
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image: string | null;
+  description: string | null;
+  points: number;
+  monthlyBudget: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type Session = {
+  id: string;
+  expiresAt: Date;
+  token: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+  userId: string;
+};
 
 type AuthContextProps = {
   loading: boolean;
-  session?: Models.Session;
-  user?: User;
-  userInfo?: UserInfo;
+  session: Session | null;
+  user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (email: string, password: string, name?: string) => Promise<void>;
@@ -18,9 +38,8 @@ type AuthContextProps = {
 
 const AuthContext = createContext<AuthContextProps>({
   loading: true,
-  session: undefined,
-  user: undefined,
-  userInfo: undefined,
+  session: null,
+  user: null,
   login: () => {
     throw new Error("Function not implemented.");
   },
@@ -41,46 +60,54 @@ export function useAuth() {
 
 export default function AuthProvider(props: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<Models.Session>();
-  const [user, setUser] = useState<User>();
-  const [userInfo, setUserInfo] = useState<UserInfo>();
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const login = async (email: string, password: string) => {
-    await loginUser(email, password).then((data) => {
-      setSession(data.session);
-      setUser(data.user);
-      setUserInfo(data.userInfo);
+    const { data, error } = await authClient.signIn.email({
+      email,
+      password,
     });
+    if (error) throw error;
+    if (data) {
+      setSession(data.session as Session);
+      setUser(data.user as User);
+    }
   };
 
   const logout = async () => {
-    await logoutUser().then(() => {
-      setSession(undefined);
-      setUser(undefined);
-      setUserInfo(undefined);
-    });
+    await authClient.signOut();
+    setSession(null);
+    setUser(null);
   };
 
   const register = async (email: string, password: string, name?: string) => {
-    await registerUser(email, password, name).then((data) => {
-      setSession(data.session);
-      setUser(data.user);
-      setUserInfo(data.userInfo);
+    const { data, error } = await authClient.signUp.email({
+      email,
+      password,
+      name: name || email.split("@")[0],
     });
+    if (error) throw error;
+    if (data) {
+      setSession(data.session as Session);
+      setUser(data.user as User);
+    }
   };
 
   const refresh = async () => {
-    await getUser().then((data) => {
+    try {
+      const { data } = await authClient.getSession();
       if (data) {
-        setSession(data.session);
-        setUser(data.user);
-        setUserInfo(data.userInfo as UserInfoDocument);
+        setSession(data.session as Session);
+        setUser(data.user as User);
       } else {
-        setUser(undefined);
-        setSession(undefined);
-        setUserInfo(undefined);
+        setSession(null);
+        setUser(null);
       }
-    });
+    } catch {
+      setSession(null);
+      setUser(null);
+    }
     setLoading(false);
   };
 
@@ -89,7 +116,7 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ loading, user, userInfo, session, login, logout, register, refresh }}>
+    <AuthContext.Provider value={{ loading, user, session, login, logout, register, refresh }}>
       {props.children}
     </AuthContext.Provider>
   );

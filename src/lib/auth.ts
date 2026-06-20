@@ -1,58 +1,72 @@
-import { account, collectionIds, databaseIds, databases } from "@/lib/integrations/appwrite/main";
-import { User, UserInfo, UserInfoDocument, UserInfoSchema, UserPrefs } from "@/lib/integrations/appwrite/types";
-import { ID } from "appwrite";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
-export async function loginUser(email: string, password: string) {
-  const session = await account.createEmailPasswordSession(email, password);
-  const user = (await account.get<UserPrefs>()) as User;
-  const userInfo = await getUserInfo(user);
-  return { session, user, userInfo };
-}
+import * as schema from "@/lib/database/schema";
 
-export async function logoutUser() {
-  await account.deleteSession("current");
-}
+let _auth: ReturnType<typeof betterAuth> | null = null;
 
-export async function registerUser(email: string, password: string, name?: string) {
-  return await account.create<UserPrefs>(ID.unique(), email, password, name).then(() => loginUser(email, password));
-}
+function getAuth() {
+  if (_auth) return _auth;
 
-export async function getUser() {
-  try {
-    const session = await account.getSession("current");
-    const user = (await account.get<UserPrefs>()) as User;
-    const userInfo = await getUserInfo(user);
-    return { session, user, userInfo };
-  } catch (err) {
-    console.error(err);
-    return undefined;
-  }
-}
+  // Lazy import to avoid build-time database connection
+  const { neon } = require("@neondatabase/serverless");
+  const { drizzle } = require("drizzle-orm/neon-http");
 
-export async function updateUserPrefs(currentData: UserPrefs, newData: Partial<UserPrefs>) {
-  const data = { ...currentData, ...newData };
-  return account.updatePrefs(data);
-}
+  const sql = neon(process.env.DATABASE_URL!);
+  const db = drizzle({ client: sql, schema });
 
-export async function getUserInfo(user: User) {
-  let data = await databases.getDocument(databaseIds.main, collectionIds.users, user.$id).catch((err) => {
-    console.error(err);
-    return undefined;
+  _auth = betterAuth({
+    database: drizzleAdapter(db, { provider: "pg" }),
+    emailAndPassword: {
+      enabled: true,
+    },
+    user: {
+      additionalFields: {
+        description: {
+          type: "string",
+          required: false,
+        },
+        points: {
+          type: "number",
+          required: false,
+          defaultValue: 0,
+        },
+        monthlyBudget: {
+          type: "number",
+          required: false,
+        },
+      },
+    },
+    session: {
+      expiresIn: 60 * 60 * 24 * 7, // 7 days
+      updateAge: 60 * 60 * 24, // 1 day
+    },
   });
-  if (!data) {
-    data = await databases.createDocument(databaseIds.main, collectionIds.users, user.$id, {
-      name: user.name,
-    });
-  }
-  return UserInfoSchema.parse(data) as UserInfoDocument;
+
+  return _auth;
 }
 
-export async function updateUserInfo(userId: string, data: Partial<UserInfo>) {
-  if (data.name) await account.updateName(data.name);
-  const res = await databases.updateDocument(databaseIds.main, collectionIds.users, userId, data);
-  return UserInfoSchema.parse(res) as UserInfoDocument;
-}
+// Proxy that lazily initializes the auth instance
+// The `has` trap is needed so `"handler" in auth` works (used by toNextJsHandler)
+// The `apply` trap is needed so `auth(request)` works as a fallback
+const authTarget = function () {} as unknown as ReturnType<typeof betterAuth>;
+export const auth = new Proxy(authTarget, {
+  has(_target, prop) {
+    const instance = getAuth();
+    return prop in instance;
+  },
+  apply(_target, _thisArg, args) {
+    const instance = getAuth();
+    return (instance as any)(...args);
+  },
+  get(_target, prop, _receiver) {
+    const instance = getAuth();
+    const value = (instance as any)[prop];
+    if (typeof value === "function") {
+      return value.bind(instance);
+    }
+    return value;
+  },
+});
 
-export function sendEmailVertification() {
-  return account.createVerification(window.location.origin + "/verify");
-}
+export type Session = ReturnType<typeof betterAuth>["$Infer"]["Session"];
