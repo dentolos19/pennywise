@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { deletePostAction, getPostAction, updatePostAction } from "@/app/(platform)/community/actions";
@@ -11,10 +11,9 @@ import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import FormStatus from "@/components/ui/form-status";
 import type { Post } from "@/lib/posts";
-import { RouteProps } from "@/types";
 
-export default function Page(props: RouteProps) {
-  const id = props.params.id as string;
+export default function Page() {
+  const { id } = useParams<{ id: string }>();
 
   const router = useRouter();
   const auth = useAuth();

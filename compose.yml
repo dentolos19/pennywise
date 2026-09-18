@@ -1,0 +1,28 @@
+services:
+  database:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: main
+      POSTGRES_PASSWORD: pennywise
+      POSTGRES_USER: pennywise
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pennywise -d main"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+  database-proxy:
+    image: ghcr.io/timowilhelm/local-neon-http-proxy:main
+    environment:
+      PG_CONNECTION_STRING: postgres://pennywise:pennywise@database:5432/main
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:4444:4444"
+
+volumes:
+  database:

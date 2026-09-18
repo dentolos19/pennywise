@@ -4,7 +4,7 @@
     {
       "label": "Setup",
       "type": "shell",
-      "command": "just setup",
+      "command": "just setup prerun",
       "presentation": {
         "close": true
       }

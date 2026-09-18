@@ -5,6 +5,7 @@
 # Build files
 .next/
 .open-next/
+.vinext/
 .wrangler/
 node_modules/
 dist/

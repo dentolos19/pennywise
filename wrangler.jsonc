@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pennywise",
+  "main": "vinext/server/fetch-handler",
+  "compatibility_date": "2026-10-01",
+  "observability": {
+    "logs": {
+      "enabled": true,
+    },
+    "traces": {
+      "enabled": true,
+    },
+    "issues": {
+      "enabled": true,
+    },
+  },
+  "route": {
+    "pattern": "pennywise.dennise.me",
+    "custom_domain": true,
+  },
+}
