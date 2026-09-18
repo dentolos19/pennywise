@@ -1,8 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
-
-import { auth } from "@/lib/auth";
+import { requireUserId } from "@/lib/auth";
 import { createExpense, deleteExpense, getExpense, getExpenses, updateExpense, type Expense } from "@/lib/expenses";
 
 type ExpenseInput = {
@@ -13,17 +11,6 @@ type ExpenseInput = {
   quantity: number;
   tags?: string[];
 };
-
-async function requireUserId() {
-  const session = await auth.api.getSession({ headers: headers() });
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    throw new Error("You must be logged in to manage expenses.");
-  }
-
-  return userId;
-}
 
 async function requireOwnedExpense(expenseId: string, userId: string): Promise<Expense> {
   const expense = await getExpense(expenseId);
@@ -36,28 +23,28 @@ async function requireOwnedExpense(expenseId: string, userId: string): Promise<E
 }
 
 export async function getExpensesAction() {
-  const userId = await requireUserId();
+  const userId = await requireUserId("You must be logged in to manage expenses.");
   return getExpenses(userId);
 }
 
 export async function getExpenseAction(expenseId: string) {
-  const userId = await requireUserId();
+  const userId = await requireUserId("You must be logged in to manage expenses.");
   return requireOwnedExpense(expenseId, userId);
 }
 
 export async function createExpenseAction(data: ExpenseInput) {
-  const userId = await requireUserId();
+  const userId = await requireUserId("You must be logged in to manage expenses.");
   return createExpense(userId, data);
 }
 
 export async function updateExpenseAction(expenseId: string, data: Partial<ExpenseInput>) {
-  const userId = await requireUserId();
+  const userId = await requireUserId("You must be logged in to manage expenses.");
   await requireOwnedExpense(expenseId, userId);
   return updateExpense(expenseId, data);
 }
 
 export async function deleteExpenseAction(expenseId: string) {
-  const userId = await requireUserId();
+  const userId = await requireUserId("You must be logged in to manage expenses.");
   await requireOwnedExpense(expenseId, userId);
   await deleteExpense(expenseId);
 }

@@ -3,7 +3,7 @@
 import { Box, Button, FormControl, InputAdornment, OutlinedInput, Paper, TextField, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
@@ -14,7 +14,6 @@ import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import FormStatus from "@/components/ui/form-status";
 import type { Expense } from "@/lib/expenses";
-import { RouteProps } from "@/types";
 
 const ExpenseSchema = z.object({
   name: z.string(),
@@ -24,8 +23,8 @@ const ExpenseSchema = z.object({
   quantity: z.number(),
 });
 
-export default function Page(props: RouteProps) {
-  const id = props.params.id as string;
+export default function Page() {
+  const { id } = useParams<{ id: string }>();
 
   const router = useRouter();
   const auth = useAuth();

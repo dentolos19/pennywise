@@ -2,7 +2,7 @@
 
 import { Box, Button, Card, CardActionArea, Chip, Paper, Typography } from "@mui/material";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/contexts/auth-context";
@@ -11,7 +11,6 @@ import LoadingView from "@/components/views/loading-view";
 import NotFoundView from "@/components/views/not-found-view";
 import { authClient } from "@/lib/auth-client";
 import { timeout } from "@/lib/utils";
-import { RouteProps } from "@/types";
 
 type Lesson = {
   id: string;
@@ -25,8 +24,8 @@ type Lesson = {
   }[];
 };
 
-export default function Page(props: RouteProps) {
-  const id = props.params.id;
+export default function Page() {
+  const { id } = useParams<{ id: string }>();
 
   const router = useRouter();
   const auth = useAuth();

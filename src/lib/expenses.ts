@@ -1,6 +1,6 @@
 import { eq, desc } from "drizzle-orm";
 
-import { getDatabaseClient } from "@/lib/database";
+import { getDatabase } from "@/lib/database";
 import { expense } from "@/lib/database/schema";
 
 export type Expense = typeof expense.$inferSelect;
@@ -10,7 +10,7 @@ export async function createExpense(
   userId: string,
   data: { name: string; description?: string; date: Date; cost: number; quantity: number; tags?: string[] },
 ) {
-  const database = getDatabaseClient();
+  const database = getDatabase();
   const [created] = await database
     .insert(expense)
     .values({
@@ -27,13 +27,13 @@ export async function createExpense(
 }
 
 export async function getExpense(expenseId: string) {
-  const database = getDatabaseClient();
+  const database = getDatabase();
   const [result] = await database.select().from(expense).where(eq(expense.id, expenseId));
   return result;
 }
 
 export async function getExpenses(userId: string) {
-  const database = getDatabaseClient();
+  const database = getDatabase();
   const results = await database.select().from(expense).where(eq(expense.userId, userId)).orderBy(desc(expense.date));
   return results;
 }
@@ -42,12 +42,12 @@ export async function updateExpense(
   expenseId: string,
   data: Partial<{ name: string; description: string; date: Date; cost: number; quantity: number; tags: string[] }>,
 ) {
-  const database = getDatabaseClient();
+  const database = getDatabase();
   const [updated] = await database.update(expense).set(data).where(eq(expense.id, expenseId)).returning();
   return updated;
 }
 
 export async function deleteExpense(expenseId: string) {
-  const database = getDatabaseClient();
+  const database = getDatabase();
   await database.delete(expense).where(eq(expense.id, expenseId));
 }

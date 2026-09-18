@@ -1,18 +1,15 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { env } from "cloudflare:workers";
+import { headers } from "next/headers";
 
-import * as schema from "@/lib/database/schema";
+import { getDatabase } from "@/lib/database";
 
 function createAuth() {
-  // Lazy import to avoid build-time database connection
-  const { neon } = require("@neondatabase/serverless");
-  const { drizzle } = require("drizzle-orm/neon-http");
-
-  const sql = neon(process.env.DATABASE_URL!);
-  const db = drizzle({ client: sql, schema });
-
   return betterAuth({
-    database: drizzleAdapter(db, { provider: "pg" }),
+    secret: env.BETTER_AUTH_SECRET,
+    baseURL: env.BETTER_AUTH_URL,
+    database: drizzleAdapter(getDatabase(), { provider: "pg" }),
     emailAndPassword: {
       enabled: true,
     },
@@ -76,3 +73,10 @@ export const auth = new Proxy(authTarget, {
 });
 
 export type Session = AppAuth["$Infer"]["Session"];
+
+export async function requireUserId(message: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+  if (!userId) throw new Error(message);
+  return userId;
+}

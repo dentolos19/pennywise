@@ -1,5 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText, type Message } from "ai";
+import { env } from "cloudflare:workers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 30;
@@ -14,15 +15,15 @@ export async function POST(req: NextRequest) {
 
   const openrouter = createOpenAI({
     baseURL: "https://openrouter.ai/api/v1",
-    apiKey: process.env.OPENROUTER_API_KEY!,
+    apiKey: env.OPENROUTER_API_KEY,
     headers: {
-      "HTTP-Referer": process.env.OPENROUTER_REFERER || "",
-      "X-OpenRouter-Title": process.env.OPENROUTER_TITLE || "",
+      "HTTP-Referer": env.OPENROUTER_REFERER || "",
+      "X-OpenRouter-Title": env.OPENROUTER_TITLE || "",
     },
   });
 
   const result = await streamText({
-    model: openrouter(process.env.OPENROUTER_MODEL || "openrouter/auto"),
+    model: openrouter(env.OPENROUTER_MODEL || "openrouter/auto"),
     messages: convertToCoreMessages(messages),
   });
 
