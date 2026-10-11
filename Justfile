@@ -26,7 +26,7 @@ check:
 migrate:
     bun run db:migrate
 
-deploy:
+deploy: install
     #!/usr/bin/env bash
     set -euo pipefail
     names=(
