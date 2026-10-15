@@ -1,9 +1,6 @@
 "use client";
 
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
-import { Box, Tab } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
 
 import LessonsTab from "@/app/(platform)/learn/_components/lessons-tab";
@@ -18,20 +15,24 @@ export default function Page() {
 
   return (
     <Box>
-      <TabContext value={tab}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <TabList variant={"fullWidth"} onChange={handleChange}>
-            <Tab label={"Lessons"} value={"lessons"} />
-            <Tab label={"Resources"} value={"resources"} />
-          </TabList>
-        </Box>
-        <TabPanel value={"lessons"}>
-          <LessonsTab />
-        </TabPanel>
-        <TabPanel value={"resources"}>
-          <ResourcesTab />
-        </TabPanel>
-      </TabContext>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={tab} variant={"fullWidth"} onChange={handleChange} aria-label="Learning Resources">
+          <Tab id="lessons-tab" aria-controls="lessons-panel" label={"Lessons"} value={"lessons"} />
+          <Tab id="resources-tab" aria-controls="resources-panel" label={"Resources"} value={"resources"} />
+        </Tabs>
+      </Box>
+      <Box role="tabpanel" id="lessons-panel" aria-labelledby="lessons-tab" hidden={tab !== "lessons"} sx={{ p: 3 }}>
+        {tab === "lessons" && <LessonsTab />}
+      </Box>
+      <Box
+        role="tabpanel"
+        id="resources-panel"
+        aria-labelledby="resources-tab"
+        hidden={tab !== "resources"}
+        sx={{ p: 3 }}
+      >
+        {tab === "resources" && <ResourcesTab />}
+      </Box>
     </Box>
   );
 }

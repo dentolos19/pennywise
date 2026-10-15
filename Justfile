@@ -1,8 +1,7 @@
 set dotenv-load
 
-setup mode="": install
-    just compose
-    just migrate
+setup mode="": install compose
+    just --no-deps migrate
     if [ "{{ mode }}" != "prerun" ]; then just decompose; fi
 
 install:
@@ -12,10 +11,10 @@ start: compose
     bun run dev
 
 compose:
-    docker compose up --detach --wait
+    if [ "${CI:-false}" != "true" ]; then docker compose up --detach --wait; fi
 
 decompose:
-    docker compose down
+    if [ "${CI:-false}" != "true" ]; then docker compose down; fi
 
 build:
     bun run build
@@ -23,13 +22,16 @@ build:
 check:
     bun run check
 
-migrate:
+test:
+    bun test
+
+migrate: compose
     bun run db:migrate
 
 deploy: install
     #!/usr/bin/env bash
     set -euo pipefail
-    names=(
+    secrets=(
         BETTER_AUTH_SECRET
         BETTER_AUTH_URL
         DATABASE_URL
@@ -38,6 +40,6 @@ deploy: install
         OPENROUTER_REFERER
         OPENROUTER_TITLE
     )
-    for name in "${names[@]}"; do if [[ -z "${!name:-}" ]]; then echo "Missing worker secret value: $name" >&2; exit 1; fi; done
-    node -e 'process.stdout.write(JSON.stringify(Object.fromEntries(process.argv.slice(1).map((name) => [name, process.env[name]]))))' "${names[@]}" | bun wrangler secret bulk
+    for secret in "${secrets[@]}"; do if [[ -z "${!secret:-}" ]]; then echo "Missing secret value: $secret" >&2; exit 1; fi; done
+    node -e 'process.stdout.write(JSON.stringify(Object.fromEntries(process.argv.slice(1).map((name) => [name, process.env[name]]))))' "${secrets[@]}" | bun wrangler secret bulk
     bun run deploy

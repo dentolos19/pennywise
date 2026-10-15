@@ -1,17 +1,33 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { convertToCoreMessages, streamText, type Message } from "ai";
+import {
+  convertToModelMessages,
+  createUIMessageStreamResponse,
+  streamText,
+  toUIMessageStream,
+  validateUIMessages,
+} from "ai";
 import { env } from "cloudflare:workers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
-  const payload = await req.json();
+  let payload;
+  try {
+    payload = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
+  }
   if (!payload || typeof payload !== "object" || !("messages" in payload) || !Array.isArray(payload.messages)) {
     return NextResponse.json({ error: "Messages must be an array." }, { status: 400 });
   }
 
-  const messages = payload.messages as Message[];
+  let messages;
+  try {
+    messages = await validateUIMessages({ messages: payload.messages });
+  } catch {
+    return NextResponse.json({ error: "Invalid chat messages." }, { status: 400 });
+  }
 
   const openrouter = createOpenAI({
     baseURL: "https://openrouter.ai/api/v1",
@@ -23,9 +39,9 @@ export async function POST(req: NextRequest) {
   });
 
   const result = await streamText({
-    model: openrouter(env.OPENROUTER_MODEL || "openrouter/auto"),
-    messages: convertToCoreMessages(messages),
+    model: openrouter.chat(env.OPENROUTER_MODEL || "openrouter/auto"),
+    messages: await convertToModelMessages(messages),
   });
 
-  return result.toDataStreamResponse();
+  return createUIMessageStreamResponse({ stream: toUIMessageStream({ stream: result.stream }) });
 }
