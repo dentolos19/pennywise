@@ -54,7 +54,9 @@ export default function ToastProvider(props: { children: React.ReactNode }) {
         open={state.open}
         autoHideDuration={5000}
         onClose={handleClose}
-        TransitionProps={{ onExited: handleExited }}
+        slotProps={{
+          transition: { onExited: handleExited },
+        }}
       >
         <Alert variant={"filled"} severity={toast?.severity} onClose={handleClose}>
           {toast?.message}

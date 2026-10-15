@@ -163,45 +163,40 @@ export default function Page() {
           </Button>
         )}
       </Stack>
-      <Fab LinkComponent={Link} className={"fixed bottom-4 right-4 md:bottom-8 md:right-8"} href={"/tracker/new"}>
+      <Fab LinkComponent={Link} className={"fixed right-4 bottom-4 md:right-8 md:bottom-8"} href={"/tracker/new"}>
         <AddIcon />
       </Fab>
-      <Dialog
-        open={modalOpen}
-        onClose={handleModalClose}
-        PaperProps={{
-          component: "form",
-          action: handleModalSave,
-        }}
-      >
-        <DialogTitle>Set Monthly Budget</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Please set your monthly budget. Be appropriate in your setting!</DialogContentText>
-          <FormControl className={"mt-4 w-full"} variant={"outlined"}>
-            <OutlinedInput
-              type={"number"}
-              name={"budget"}
-              defaultValue={"0.00"}
-              required
-              startAdornment={<InputAdornment position={"start"}>$</InputAdornment>}
-              slotProps={{
-                input: {
-                  step: 0.01,
-                },
-              }}
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <FormStatus>
-            <FormStatus.Active>
-              <Button type={"submit"}>Save</Button>
-            </FormStatus.Active>
-            <FormStatus.Pending>
-              <Button disabled>Saving...</Button>
-            </FormStatus.Pending>
-          </FormStatus>
-        </DialogActions>
+      <Dialog open={modalOpen} onClose={handleModalClose}>
+        <form action={handleModalSave}>
+          <DialogTitle>Set Monthly Budget</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Please set your monthly budget. Be appropriate in your setting!</DialogContentText>
+            <FormControl className={"mt-4 w-full"} variant={"outlined"}>
+              <OutlinedInput
+                type={"number"}
+                name={"budget"}
+                defaultValue={"0.00"}
+                required
+                startAdornment={<InputAdornment position={"start"}>$</InputAdornment>}
+                slotProps={{
+                  input: {
+                    step: 0.01,
+                  },
+                }}
+              />
+            </FormControl>
+          </DialogContent>
+          <DialogActions>
+            <FormStatus>
+              <FormStatus.Active>
+                <Button type={"submit"}>Save</Button>
+              </FormStatus.Active>
+              <FormStatus.Pending>
+                <Button disabled>Saving...</Button>
+              </FormStatus.Pending>
+            </FormStatus>
+          </DialogActions>
+        </form>
       </Dialog>
     </Box>
   );

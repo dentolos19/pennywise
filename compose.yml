@@ -11,7 +11,7 @@ services:
       timeout: 5s
       retries: 10
     ports:
-      - "127.0.0.1:5432:5432"
+      - "5432:5432"
     volumes:
       - database:/var/lib/postgresql/data
   database-proxy:
@@ -22,7 +22,7 @@ services:
       database:
         condition: service_healthy
     ports:
-      - "127.0.0.1:4444:4444"
+      - "4444:4444"
 
 volumes:
   database:

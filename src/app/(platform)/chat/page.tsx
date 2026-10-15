@@ -4,6 +4,7 @@ import SendIcon from "@mui/icons-material/Send";
 import StopIcon from "@mui/icons-material/Stop";
 import { Avatar, Box, IconButton, Paper, Stack, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
 import clsx from "clsx";
+import { useState } from "react";
 import Markdown from "react-markdown";
 
 import { useAuth } from "@/components/contexts/auth-context";
@@ -29,6 +30,13 @@ function humanizeRole(role: string | "system" | "data" | "user" | "assistant") {
 export default function Page() {
   const auth = useAuth();
   const chat = useChatProxy();
+  const [input, setInput] = useState("");
+  const isLoading = chat.status === "submitted" || chat.status === "streaming";
+  function submit() {
+    if (!input.trim() || isLoading) return;
+    void chat.sendMessage({ text: input });
+    setInput("");
+  }
 
   if (!auth.user) return <MessageView title={"Missing Parameters"} message={"Please log in to use the chat."} />;
 
@@ -50,7 +58,14 @@ export default function Page() {
               <Box className={"flex-1"}>
                 <Typography className={"text-lg font-bold"}>{humanizeRole(message.role)}</Typography>
                 <Typography>
-                  <Markdown className={"prose prose-invert"}>{message.content}</Markdown>
+                  <div className="prose prose-invert">
+                    <Markdown>
+                      {message.parts
+                        .filter((part) => part.type === "text")
+                        .map((part) => part.text)
+                        .join("")}
+                    </Markdown>
+                  </div>
                 </Typography>
               </Box>
             </Paper>
@@ -59,7 +74,7 @@ export default function Page() {
       </Box>
       <Paper>
         <Toolbar>
-          {chat.isLoading ? (
+          {isLoading ? (
             <>
               <Typography className={"flex-1"}>Generating response...</Typography>
               <Tooltip title={"Stop"}>
@@ -76,14 +91,14 @@ export default function Page() {
                 size={"small"}
                 type={"text"}
                 placeholder={"Prompt"}
-                value={chat.input}
+                value={input}
                 hiddenLabel
-                disabled={chat.isLoading}
-                onChange={chat.handleInputChange}
-                onKeyDown={onKeyCallback("Enter", chat.handleSubmit)}
+                disabled={isLoading}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={onKeyCallback("Enter", submit)}
               />
               <Tooltip title={"Send"}>
-                <IconButton className={"ml-2"} onClick={chat.handleSubmit}>
+                <IconButton className={"ml-2"} onClick={submit}>
                   <SendIcon />
                 </IconButton>
               </Tooltip>

@@ -33,7 +33,7 @@ export default function Page() {
           <PostItem key={post.id} data={post} />
         ))}
       </Stack>
-      <Fab LinkComponent={Link} className={"fixed bottom-4 right-4 md:bottom-8 md:right-8"} href={"/community/post"}>
+      <Fab LinkComponent={Link} className={"fixed right-4 bottom-4 md:right-8 md:bottom-8"} href={"/community/post"}>
         <AddIcon />
       </Fab>
     </Box>
