@@ -31,6 +31,7 @@ import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import FormStatus from "@/components/ui/form-status";
 import LoadingView from "@/components/views/loading-view";
+import MessageView from "@/components/views/message-view";
 import MissingParametersView from "@/components/views/missing-parameters-view";
 import { authClient } from "@/lib/auth-client";
 import type { Expense } from "@/lib/expenses";
@@ -45,6 +46,7 @@ export default function Page() {
   const toast = useToast();
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState(false);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [monthlyExpenses, setMonthlyExpenses] = useState<number>(0);
   const [monthlyBudget, setMonthlyBudget] = useState<number>(0);
@@ -53,22 +55,36 @@ export default function Page() {
 
   useEffect(() => {
     if (!auth.user) return;
-    getExpensesAction().then((res) => {
-      setExpenses(res);
-      let totalExpenses = 0;
-      res.forEach((expense: Expense) => {
-        const expenseDate = dayjs(expense.date);
-        if (filterMonth(expenseDate)) {
-          totalExpenses += expense.cost * expense.quantity;
-        }
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
+    getExpensesAction()
+      .then((res) => {
+        if (!active) return;
+        setExpenses(res);
+        let totalExpenses = 0;
+        res.forEach((expense: Expense) => {
+          const expenseDate = dayjs(expense.date);
+          if (filterMonth(expenseDate)) {
+            totalExpenses += expense.cost * expense.quantity;
+          }
+        });
+        setMonthlyExpenses(totalExpenses);
+        setMonthlyBudget(auth.user?.monthlyBudget || 0);
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
-      setMonthlyExpenses(totalExpenses);
-      setMonthlyBudget(auth.user?.monthlyBudget || 0);
-      setLoading(false);
-    });
-  }, [auth]);
+    return () => {
+      active = false;
+    };
+  }, [auth.user]);
 
   if (loading) return <LoadingView />;
+  if (loadError) return <MessageView title={"Unable to load expenses"} message={"Please try again later."} />;
   if (!auth.user) return <MissingParametersView />;
 
   const handleModalSave = async (data: FormData) => {
@@ -77,17 +93,17 @@ export default function Page() {
     const budget = Number.parseFloat(data.get("budget") as string);
 
     try {
-      await authClient.updateUser({
+      const { error } = await authClient.updateUser({
         monthlyBudget: budget,
       });
+      if (error) throw error;
       setMonthlyBudget(budget);
       setModalOpen(false);
+      await auth.refresh();
+      toast.show({ message: "Monthly budget has been saved!", severity: "success" });
     } catch (err) {
       console.error(err);
       toast.show({ message: "Failed to save monthly budget! Please try again later.", severity: "error" });
-    } finally {
-      auth.refresh();
-      toast.show({ message: "Monthly budget has been saved!", severity: "success" });
     }
   };
 

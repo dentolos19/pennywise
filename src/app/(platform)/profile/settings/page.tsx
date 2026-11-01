@@ -19,20 +19,20 @@ export default function Page() {
   const handleSave = async (data: FormData) => {
     if (!auth.user) return;
 
-    const user_name = data.get("name") as string;
-    const user_description = data.get("description") as string;
-
     try {
-      await authClient.updateUser({
-        name: user_name,
-        description: user_description,
+      const name = data.get("name");
+      const description = data.get("description");
+      if (typeof name !== "string" || typeof description !== "string") throw new Error("Invalid profile data.");
+      const { error } = await authClient.updateUser({
+        name,
+        description,
       });
+      if (error) throw error;
+      await auth.refresh();
       toast.show({ message: "Your settings has been saved!", severity: "success" });
+      router.push("/profile");
     } catch {
       toast.show({ message: "Failed to save settings! Please try again later.", severity: "error" });
-    } finally {
-      auth.refresh();
-      router.push("/profile");
     }
   };
 

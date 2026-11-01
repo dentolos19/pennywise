@@ -5,11 +5,13 @@ import { blue } from "@mui/material/colors";
 import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/components/contexts/auth-context";
+import { useToast } from "@/components/contexts/toast-context";
 import MissingParametersView from "@/components/views/missing-parameters-view";
 
 export default function Page() {
   const router = useRouter();
   const auth = useAuth();
+  const toast = useToast();
 
   if (!auth.user) return <MissingParametersView />;
 
@@ -18,7 +20,12 @@ export default function Page() {
   };
 
   const handleLogout = async () => {
-    await auth.logout().then(() => router.push("/"));
+    try {
+      await auth.logout();
+      router.push("/");
+    } catch {
+      toast.show({ message: "Unable to log out. Please try again.", severity: "error" });
+    }
   };
 
   return (

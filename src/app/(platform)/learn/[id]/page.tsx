@@ -3,13 +3,13 @@
 import { Box, Button, Card, CardActionArea, Chip, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { completeLessonAction } from "@/app/(platform)/learn/actions";
 import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import LoadingView from "@/components/views/loading-view";
 import NotFoundView from "@/components/views/not-found-view";
-import { authClient } from "@/lib/auth-client";
 import { timeout } from "@/lib/utils";
 
 type Lesson = {
@@ -36,7 +36,10 @@ export default function Page() {
   const [lesson, setLesson] = useState<Lesson>();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [rewardStatus, setRewardStatus] = useState<"pending" | "awarded" | "failed">("pending");
+  const answering = useRef(false);
 
   useEffect(() => {
     fetch(`/api/lessons?id=${id}`)
@@ -56,25 +59,33 @@ export default function Page() {
 
   const createAnswerHandler = (choiceIndex: number) => {
     return () => {
-      if (choiceIndex === lesson.questions[questionIndex].answerIndex) setCorrectAnswers((prev) => prev + 1);
+      if (answering.current) return;
+      answering.current = true;
+      const isCorrect = choiceIndex === lesson.questions[questionIndex].answerIndex;
+      const submittedAnswers = [...answers, choiceIndex];
+      setAnswers(submittedAnswers);
+      if (isCorrect) setCorrectAnswers((prev) => prev + 1);
       setShowAnswers(true);
       timeout(1000).then(() => {
+        answering.current = false;
         setShowAnswers(false);
         if (questionIndex === lesson.questions.length - 1) {
           setPhase("end");
-          if (!auth.user) return;
-          if (correctAnswers !== lesson.questions.length - 1) return;
-          authClient
-            .updateUser({
-              points: (auth.user.points || 0) + lesson.points,
-            })
+          if (correctAnswers + Number(isCorrect) !== lesson.questions.length) return;
+          if (!auth.user) {
+            setRewardStatus("failed");
+            return;
+          }
+          completeLessonAction(lesson.id, submittedAnswers)
             .then(() => {
+              setRewardStatus("awarded");
               toast.show({
                 message: `You have earned ${lesson.points} points!`,
                 severity: "info",
               });
-              auth.refresh();
-            });
+              void auth.refresh();
+            })
+            .catch(() => setRewardStatus("failed"));
         } else {
           setQuestionIndex((prev) => prev + 1);
         }
@@ -90,6 +101,9 @@ export default function Page() {
     setPhase("start");
     setQuestionIndex(0);
     setCorrectAnswers(0);
+    setAnswers([]);
+    answering.current = false;
+    setRewardStatus("pending");
   };
 
   if (phase === "start")
@@ -120,7 +134,18 @@ export default function Page() {
             <Typography className={"text-4xl font-bold"} gutterBottom>
               You've passed!
             </Typography>
-            <Typography color={"textSecondary"}>Congratulations! You have earned {lesson.points} points!</Typography>
+            <Typography color={"textSecondary"}>
+              {rewardStatus === "awarded"
+                ? `Congratulations! You have earned ${lesson.points} points!`
+                : rewardStatus === "failed"
+                  ? "Unable to add points. Please try again."
+                  : "Adding your points..."}
+            </Typography>
+            {rewardStatus === "failed" && (
+              <Button variant={"outlined"} onClick={handleReset}>
+                Try Again
+              </Button>
+            )}
             <Button variant={"contained"} color={"primary"} onClick={handleComplete}>
               Home
             </Button>
@@ -128,7 +153,7 @@ export default function Page() {
         </Paper>
       </Box>
     );
-  else if (phase === "end" && correctAnswers < lesson.questions.length - 1)
+  else if (phase === "end")
     return (
       <Box className={"grid h-full place-items-center"}>
         <Paper className={"w-[90%] p-8 md:w-[80%] lg:w-[60%] xl:w-[40%]"} variant={"outlined"}>
@@ -137,7 +162,7 @@ export default function Page() {
               <Typography className={"text-4xl font-bold"} gutterBottom>
                 You've failed!
               </Typography>
-              <Typography color={"textSecondary"}>Keep going! It is never too late to give up!</Typography>
+              <Typography color={"textSecondary"}>Keep going! You can always try again.</Typography>
             </Box>
             <Button variant={"contained"} color={"primary"} onClick={handleReset}>
               Try Again

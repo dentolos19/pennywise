@@ -4,7 +4,7 @@ import { getDatabase } from "@/lib/database";
 import { post } from "@/lib/database/schema";
 
 export type Post = typeof post.$inferSelect;
-export type NewPost = typeof post.$inferInsert;
+export type PostWithUser = Awaited<ReturnType<typeof getPostsWithUsers>>[number];
 
 export async function createPost(userId: string, data: { content: string; mediaUrl?: string }) {
   const database = getDatabase();
@@ -25,26 +25,11 @@ export async function getPost(postId: string) {
   return result;
 }
 
-export async function getPostsWithUser(postId: string) {
-  const database = getDatabase();
-  const result = await database.query.post.findFirst({
-    where: eq(post.id, postId),
-    with: { user: true },
-  });
-  return result;
-}
-
-export async function getPosts() {
-  const database = getDatabase();
-  const results = await database.select().from(post).orderBy(desc(post.createdAt));
-  return results;
-}
-
 export async function getPostsWithUsers() {
   const database = getDatabase();
   const results = await database.query.post.findMany({
     orderBy: [desc(post.createdAt)],
-    with: { user: true },
+    with: { user: { columns: { id: true, name: true } } },
   });
   return results;
 }

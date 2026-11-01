@@ -10,6 +10,7 @@ import NotFoundPage from "@/app/not-found";
 import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import FormStatus from "@/components/ui/form-status";
+import MessageView from "@/components/views/message-view";
 import type { Post } from "@/lib/posts";
 
 export default function Page() {
@@ -20,31 +21,44 @@ export default function Page() {
   const toast = useToast();
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [post, setPost] = useState<Post | undefined>();
 
   useEffect(() => {
-    getPostAction(id).then((res) => {
-      setPost(res);
-      setLoading(false);
-    });
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
+    getPostAction(id)
+      .then((res) => {
+        if (active) setPost(res);
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   if (loading) return <LoadingPage />;
+  if (loadError) return <MessageView title={"Unable to load post"} message={"Please try again later."} />;
   if (!post) return <NotFoundPage />;
 
   const handleSave = async (data: FormData) => {
     if (!auth.user) return;
 
-    const content = data.get("content") as string;
-
     try {
+      const content = data.get("content");
+      if (typeof content !== "string" || !content.trim()) throw new Error("Post content is required.");
       await updatePostAction(id, { content });
       toast.show({ message: "Your post has been updated!", severity: "success" });
+      router.push("/community");
     } catch (err) {
       console.error(err);
       toast.show({ message: "Unable to update your post! Please try again later.", severity: "error" });
-    } finally {
-      router.push("/community");
     }
   };
 
@@ -53,11 +67,10 @@ export default function Page() {
     try {
       await deletePostAction(id);
       toast.show({ message: "Your post has been deleted!", severity: "success" });
+      router.push("/community");
     } catch (err) {
       console.error(err);
       toast.show({ message: "Unable to delete your post! Please try again later.", severity: "error" });
-    } finally {
-      router.push("/community");
     }
   };
 

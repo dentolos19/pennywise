@@ -1,27 +1,22 @@
-# Editor configurations
-.vs/
+*.d.ts
+*.tsbuildinfo
+.DS_Store
+.cloudflare/
+.env*
 .idea/
-
-# Build files
 .next/
 .open-next/
-.vinext/
-.wrangler/
-node_modules/
-dist/
-build/
-out/
-coverage/
-*.tsbuildinfo
-*.d.ts
-
-# User files
-.env*
-!.env*.template
-
-# Miscellaneous files
 .tmp/
-.DS_Store
+.vinext/
+.vs/
+.wrangler/
 Desktop.ini
 Thumbs.db
+build/
+coverage/
+dist/
+node_modules/
+out/
+
+!.env*.template
 !.gitkeep

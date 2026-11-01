@@ -13,6 +13,7 @@ import NotFoundPage from "@/app/not-found";
 import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import FormStatus from "@/components/ui/form-status";
+import MessageView from "@/components/views/message-view";
 import type { Expense } from "@/lib/expenses";
 
 const ExpenseSchema = z.object({
@@ -31,37 +32,49 @@ export default function Page() {
   const toast = useToast();
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [expense, setExpense] = useState<Expense | undefined>();
 
   useEffect(() => {
-    getExpenseAction(id).then((res) => {
-      setExpense(res);
-      setLoading(false);
-    });
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
+    getExpenseAction(id)
+      .then((res) => {
+        if (active) setExpense(res);
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   if (loading) return <LoadingPage />;
+  if (loadError) return <MessageView title={"Unable to load expense"} message={"Please try again later."} />;
   if (!expense) return <NotFoundPage />;
 
   const handleSave = async (data: FormData) => {
     if (!auth.user) return;
 
-    const expense = ExpenseSchema.parse({
-      name: data.get("name"),
-      description: data.get("description"),
-      date: data.get("date"),
-      cost: Number.parseFloat(data.get("cost") as string),
-      quantity: Number.parseInt(data.get("quantity") as string),
-    });
-
     try {
+      const expense = ExpenseSchema.parse({
+        name: data.get("name"),
+        description: data.get("description"),
+        date: data.get("date"),
+        cost: Number.parseFloat(String(data.get("cost") ?? "")),
+        quantity: Number.parseInt(String(data.get("quantity") ?? "")),
+      });
       await updateExpenseAction(id, expense);
       toast.show({ message: "Your expense has been updated!", severity: "success" });
+      router.push("/tracker");
     } catch (err) {
       console.error(err);
       toast.show({ message: "Unable to update your expense! Please try again later.", severity: "error" });
-    } finally {
-      router.push("/tracker");
     }
   };
 
@@ -70,11 +83,10 @@ export default function Page() {
     try {
       await deleteExpenseAction(id);
       toast.show({ message: "Your expense has been deleted!", severity: "success" });
+      router.push("/tracker");
     } catch (err) {
       console.error(err);
       toast.show({ message: "Unable to delete your expense! Please try again later.", severity: "error" });
-    } finally {
-      router.push("/tracker");
     }
   };
 

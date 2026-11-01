@@ -4,7 +4,6 @@ import { getDatabase } from "@/lib/database";
 import { expense } from "@/lib/database/schema";
 
 export type Expense = typeof expense.$inferSelect;
-export type NewExpense = typeof expense.$inferInsert;
 
 export async function createExpense(
   userId: string,

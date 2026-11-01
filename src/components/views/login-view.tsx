@@ -11,9 +11,10 @@ export default function LoginView() {
   const [phase, setPhase] = useState<"login" | "register">("login");
 
   const handleLogin = async (data: FormData) => {
-    const email = data.get("email") as string;
-    const password = data.get("password") as string;
     try {
+      const email = data.get("email");
+      const password = data.get("password");
+      if (typeof email !== "string" || typeof password !== "string") throw new Error("Invalid credentials.");
       await auth.login(email, password);
     } catch (err) {
       console.error(err);
@@ -25,12 +26,21 @@ export default function LoginView() {
   };
 
   const handleRegister = async (data: FormData) => {
-    const name = data.get("name") as string;
-    const email = data.get("email") as string;
-    const password = data.get("password") as string;
-    const confirmPassword = data.get("confirmPassword") as string;
-    if (password !== confirmPassword) return;
     try {
+      const name = data.get("name");
+      const email = data.get("email");
+      const password = data.get("password");
+      const confirmPassword = data.get("confirmPassword");
+      if (
+        typeof name !== "string" ||
+        typeof email !== "string" ||
+        typeof password !== "string" ||
+        typeof confirmPassword !== "string"
+      ) throw new Error("Invalid registration data.");
+      if (password !== confirmPassword) {
+        toast.show({ message: "Passwords do not match.", severity: "error" });
+        return;
+      }
       await auth.register(email, password, name);
     } catch (err) {
       console.error(err);
@@ -82,7 +92,7 @@ export default function LoginView() {
               </FormStatus>
               <Typography className={"text-center"}>
                 {"Don't"} have an account?{" "}
-                <Link component={"button"} onClick={() => setPhase("register")}>
+                <Link component={"button"} type={"button"} onClick={() => setPhase("register")}>
                   Register now!
                 </Link>
               </Typography>
@@ -145,7 +155,7 @@ export default function LoginView() {
               </FormStatus>
               <Typography className={"text-center"}>
                 Have an account already?{" "}
-                <Link component={"button"} onClick={() => setPhase("login")}>
+                <Link component={"button"} type={"button"} onClick={() => setPhase("login")}>
                   Login now!
                 </Link>
               </Typography>

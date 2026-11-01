@@ -2,10 +2,10 @@
 
 import { Button, Card, CardActions, CardContent, CardMedia, Chip, Typography } from "@mui/material";
 
+import { redeemItemAction } from "@/app/(platform)/shop/actions";
 import { useAuth } from "@/components/contexts/auth-context";
 import { useToast } from "@/components/contexts/toast-context";
 import FormStatus from "@/components/ui/form-status";
-import { authClient } from "@/lib/auth-client";
 
 export default function ShopItem(props: { name: string; description?: string; points: number; imageUrl: string }) {
   const auth = useAuth();
@@ -13,23 +13,15 @@ export default function ShopItem(props: { name: string; description?: string; po
 
   const handleRedeem = async () => {
     if (!auth.user) return;
-    if ((auth.user.points || 0) < props.points) {
+    try {
+      await redeemItemAction(props.name);
+      await auth.refresh();
       toast.show({
-        message: "You don't have enough points to redeem this item!",
-        severity: "error",
+        message: "Demo redemption complete. Points were deducted; no item or email will be delivered.",
+        severity: "success",
       });
-    } else {
-      await authClient
-        .updateUser({
-          points: (auth.user.points || 0) - props.points,
-        })
-        .then(() => {
-          auth.refresh();
-          toast.show({
-            message: "Item redeemed successfully! Please check your email for more details.",
-            severity: "success",
-          });
-        });
+    } catch {
+      toast.show({ message: "Unable to redeem this item. Check your points and try again.", severity: "error" });
     }
   };
 

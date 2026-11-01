@@ -1,7 +1,12 @@
 set dotenv-load
+set dotenv-filename := dotenv_file
+set dotenv-override
+
+environment := ""
+dotenv_file := if environment == "" { ".env" } else { ".env." + environment }
 
 setup mode="": install compose
-    just --no-deps migrate
+    just --no-deps environment={{ quote(environment) }} migrate
     if [ "{{ mode }}" != "prerun" ]; then just decompose; fi
 
 install:
@@ -20,7 +25,7 @@ build:
     bun run build
 
 check:
-    bun run check
+    bun lint --fix && bun fmt && bun check --no-script
 
 test:
     bun test
@@ -28,18 +33,9 @@ test:
 migrate: compose
     bun run db:migrate
 
-deploy: install
+deploy: install build
     #!/usr/bin/env bash
     set -euo pipefail
-    secrets=(
-        BETTER_AUTH_SECRET
-        BETTER_AUTH_URL
-        DATABASE_URL
-        OPENROUTER_API_KEY
-        OPENROUTER_MODEL
-        OPENROUTER_REFERER
-        OPENROUTER_TITLE
-    )
-    for secret in "${secrets[@]}"; do if [[ -z "${!secret:-}" ]]; then echo "Missing secret value: $secret" >&2; exit 1; fi; done
-    node -e 'process.stdout.write(JSON.stringify(Object.fromEntries(process.argv.slice(1).map((name) => [name, process.env[name]]))))' "${secrets[@]}" | bun wrangler secret bulk
-    bun run deploy
+    test -f {{ quote(dotenv_file) }}
+    CI=true just environment={{ quote(environment) }} migrate
+    bun run deploy --prebuilt --secrets-file {{ quote(dotenv_file) }}

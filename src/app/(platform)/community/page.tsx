@@ -8,20 +8,33 @@ import { useEffect, useState } from "react";
 import PostItem from "@/app/(platform)/community/_components/post-item";
 import { getPostsWithUsersAction } from "@/app/(platform)/community/actions";
 import LoadingView from "@/components/views/loading-view";
-import type { Post } from "@/lib/posts";
+import MessageView from "@/components/views/message-view";
+import type { PostWithUser } from "@/lib/posts";
 
 export default function Page() {
   const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState<(Post & { user: any })[]>([]);
+  const [loadError, setLoadError] = useState(false);
+  const [posts, setPosts] = useState<PostWithUser[]>([]);
 
   useEffect(() => {
-    getPostsWithUsersAction().then((data) => {
-      setPosts(data);
-      setLoading(false);
-    });
+    let active = true;
+    getPostsWithUsersAction()
+      .then((data) => {
+        if (active) setPosts(data);
+      })
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (loading) return <LoadingView />;
+  if (loadError) return <MessageView title={"Unable to load posts"} message={"Please try again later."} />;
 
   return (
     <Box>
@@ -30,7 +43,7 @@ export default function Page() {
           <Typography className={"mt-16 text-center"}>Get started by creating a new post!</Typography>
         )}
         {posts.map((post) => (
-          <PostItem key={post.id} data={post} />
+          <PostItem key={post.id} data={post} onDeleted={() => setPosts((current) => current.filter((item) => item.id !== post.id))} />
         ))}
       </Stack>
       <Fab LinkComponent={Link} className={"fixed right-4 bottom-4 md:right-8 md:bottom-8"} href={"/community/post"}>

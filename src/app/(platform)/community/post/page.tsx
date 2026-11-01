@@ -16,16 +16,15 @@ export default function Page() {
   const handlePost = async (data: FormData) => {
     if (!auth.user) return;
 
-    const content = data.get("content") as string;
-
     try {
+      const content = data.get("content");
+      if (typeof content !== "string" || !content.trim()) throw new Error("Post content is required.");
       await createPostAction({ content });
       toast.show({ message: "Your post has been created!", severity: "success" });
+      router.push("/community");
     } catch (err) {
       console.error(err);
       toast.show({ message: "Unable to create your post! Please try again later.", severity: "error" });
-    } finally {
-      router.push("/community");
     }
   };
 

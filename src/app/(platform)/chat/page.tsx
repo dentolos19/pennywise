@@ -1,18 +1,19 @@
 "use client";
 
+import { useChat } from "@ai-sdk/react";
 import SendIcon from "@mui/icons-material/Send";
 import StopIcon from "@mui/icons-material/Stop";
 import { Avatar, Box, IconButton, Paper, Stack, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
+import { DefaultChatTransport } from "ai";
 import clsx from "clsx";
 import { useState } from "react";
 import Markdown from "react-markdown";
 
 import { useAuth } from "@/components/contexts/auth-context";
 import MessageView from "@/components/views/message-view";
-import { useChatProxy } from "@/lib/ai/main";
 import { onKeyCallback } from "@/lib/utils";
 
-function humanizeRole(role: string | "system" | "data" | "user" | "assistant") {
+function humanizeRole(role: string) {
   switch (role) {
     case "system":
       return "System";
@@ -29,7 +30,7 @@ function humanizeRole(role: string | "system" | "data" | "user" | "assistant") {
 
 export default function Page() {
   const auth = useAuth();
-  const chat = useChatProxy();
+  const chat = useChat({ transport: new DefaultChatTransport({ api: "/api/chat" }) });
   const [input, setInput] = useState("");
   const isLoading = chat.status === "submitted" || chat.status === "streaming";
   function submit() {
@@ -47,9 +48,9 @@ export default function Page() {
           {chat.messages.length === 0 && (
             <Typography className={"mt-16 text-center"}>Get started by sending a prompt!</Typography>
           )}
-          {chat.messages.map((message, index) => (
+          {chat.messages.map((message) => (
             <Paper
-              key={index}
+              key={message.id}
               className={clsx("p-4 w-fit flex gap-4", message.role === "user" && "flex-row-reverse self-end text-end")}
             >
               <Box>
@@ -57,19 +58,18 @@ export default function Page() {
               </Box>
               <Box className={"flex-1"}>
                 <Typography className={"text-lg font-bold"}>{humanizeRole(message.role)}</Typography>
-                <Typography>
-                  <div className="prose prose-invert">
-                    <Markdown>
-                      {message.parts
-                        .filter((part) => part.type === "text")
-                        .map((part) => part.text)
-                        .join("")}
-                    </Markdown>
-                  </div>
-                </Typography>
+                <Box className="prose prose-invert">
+                  <Markdown>
+                    {message.parts
+                      .filter((part) => part.type === "text")
+                      .map((part) => part.text)
+                      .join("")}
+                  </Markdown>
+                </Box>
               </Box>
             </Paper>
           ))}
+          {chat.error && <Typography color={"error"}>Unable to get a response. Please try again.</Typography>}
         </Stack>
       </Box>
       <Paper>
@@ -78,7 +78,7 @@ export default function Page() {
             <>
               <Typography className={"flex-1"}>Generating response...</Typography>
               <Tooltip title={"Stop"}>
-                <IconButton className={"ml-2"} type={"button"} onClick={chat.stop}>
+                <IconButton aria-label={"Stop response"} className={"ml-2"} type={"button"} onClick={chat.stop}>
                   <StopIcon />
                 </IconButton>
               </Tooltip>
@@ -98,7 +98,7 @@ export default function Page() {
                 onKeyDown={onKeyCallback("Enter", submit)}
               />
               <Tooltip title={"Send"}>
-                <IconButton className={"ml-2"} onClick={submit}>
+                <IconButton aria-label={"Send message"} className={"ml-2"} onClick={submit}>
                   <SendIcon />
                 </IconButton>
               </Tooltip>

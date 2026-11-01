@@ -14,17 +14,17 @@
           "To assess your creditworthiness for loans and credit cards",
           "To calculate the interest rate on your savings account"
         ],
-        "answerIndex": 3
+        "answerIndex": 2
       },
       {
         "statement": "Which of the following is a good strategy for managing credit card debt?",
         "choices": [
           "Pay the minimum amount due each month",
           "Use your credit card to pay off other debts",
-          "Pay off the full balance each month to avoid interest charges",
+          "Pay the statement balance in full by the due date when a grace period applies",
           "Apply for more credit cards to increase your available credit"
         ],
-        "answerIndex": 3
+        "answerIndex": 2
       },
       {
         "statement": "What is the main difference between a savings account and a checking account?",

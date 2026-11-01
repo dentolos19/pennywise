@@ -23,6 +23,7 @@ function createAuth() {
           type: "number",
           required: false,
           defaultValue: 0,
+          input: false,
         },
         monthlyBudget: {
           type: "number",
@@ -41,7 +42,7 @@ export type AppAuth = ReturnType<typeof createAuth>;
 
 let _auth: AppAuth | null = null;
 
-function getAuth() {
+export function getAuth() {
   if (_auth) return _auth;
 
   const instance = createAuth();
@@ -49,33 +50,8 @@ function getAuth() {
   return instance;
 }
 
-// Proxy that lazily initializes the auth instance
-// The `has` trap is needed so `"handler" in auth` works (used by toNextJsHandler)
-// The `apply` trap is needed so `auth(request)` works as a fallback
-const authTarget = function () {} as unknown as AppAuth;
-export const auth = new Proxy(authTarget, {
-  has(_target, prop) {
-    const instance = getAuth();
-    return prop in instance;
-  },
-  apply(_target, _thisArg, args) {
-    const instance = getAuth();
-    return (instance as any)(...args);
-  },
-  get(_target, prop, _receiver) {
-    const instance = getAuth();
-    const value = (instance as any)[prop];
-    if (typeof value === "function") {
-      return value.bind(instance);
-    }
-    return value;
-  },
-});
-
-export type Session = AppAuth["$Infer"]["Session"];
-
 export async function requireUserId(message: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
   const userId = session?.user?.id;
   if (!userId) throw new Error(message);
   return userId;

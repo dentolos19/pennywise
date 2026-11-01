@@ -27,22 +27,20 @@ export default function Page() {
   const handleCreate = async (data: FormData) => {
     if (!auth.user) return;
 
-    const expense = ExpenseSchema.parse({
-      name: data.get("name"),
-      description: data.get("description"),
-      date: data.get("date"),
-      cost: Number.parseFloat(data.get("cost") as string),
-      quantity: Number.parseInt(data.get("quantity") as string),
-    });
-
     try {
+      const expense = ExpenseSchema.parse({
+        name: data.get("name"),
+        description: data.get("description"),
+        date: data.get("date"),
+        cost: Number.parseFloat(String(data.get("cost") ?? "")),
+        quantity: Number.parseInt(String(data.get("quantity") ?? "")),
+      });
       await createExpenseAction(expense);
       toast.show({ message: "Your expense has been created!", severity: "success" });
+      router.push("/tracker");
     } catch (err) {
       console.error(err);
       toast.show({ message: "Unable to create your expense! Please try again later.", severity: "error" });
-    } finally {
-      router.push("/tracker");
     }
   };
 

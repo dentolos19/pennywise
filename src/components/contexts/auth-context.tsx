@@ -73,7 +73,8 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    await authClient.signOut();
+    const { error } = await authClient.signOut();
+    if (error) throw error;
     setSession(null);
     setUser(null);
   };

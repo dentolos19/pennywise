@@ -7,11 +7,13 @@ import {
   validateUIMessages,
 } from "ai";
 import { env } from "cloudflare:workers";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+
+import { getAuth } from "@/lib/auth";
 
 export const maxDuration = 30;
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   let payload;
   try {
     payload = await req.json();
@@ -28,6 +30,9 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid chat messages." }, { status: 400 });
   }
+
+  const session = await getAuth().api.getSession({ headers: req.headers });
+  if (!session?.user?.id) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
 
   const openrouter = createOpenAI({
     baseURL: "https://openrouter.ai/api/v1",
