@@ -6,14 +6,12 @@
     "types": ["bun", "vite/client"],
     "strict": true,
     "noEmit": true,
-    "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
-      "@/*": ["./src/*"]
+      "#/*": ["./src/*"]
     }
   }
 }

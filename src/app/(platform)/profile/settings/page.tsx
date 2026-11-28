@@ -3,11 +3,11 @@
 import { Box, Button, ButtonGroup, Paper, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
-import MissingParametersView from "@/components/views/missing-parameters-view";
-import { authClient } from "@/lib/auth-client";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
+import MissingParametersView from "#/components/views/missing-parameters-view";
+import { authClient } from "#/lib/auth-client";
 
 export default function Page() {
   const router = useRouter();

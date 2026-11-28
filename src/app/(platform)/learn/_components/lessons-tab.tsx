@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 
-import LessonItem from "@/app/(platform)/learn/_components/lesson-item";
-import lessons from "@/data/lessons.json";
+import LessonItem from "#/app/(platform)/learn/_components/lesson-item";
+import lessons from "#/data/lessons.json";
 
 export default function LessonsTab() {
   return (

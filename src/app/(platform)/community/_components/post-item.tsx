@@ -21,10 +21,10 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { MouseEvent, useState } from "react";
 
-import { deletePostAction } from "@/app/(platform)/community/actions";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import type { PostWithUser } from "@/lib/posts";
+import { deletePostAction } from "#/app/(platform)/community/actions";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import type { PostWithUser } from "#/lib/posts";
 
 export default function PostItem(props: { className?: string; data: PostWithUser; onDeleted: () => void }) {
   const router = useRouter();

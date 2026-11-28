@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 
-import { itemCost, lessonReward } from "@/lib/rewards";
+import { itemCost, lessonReward } from "#/lib/rewards";
 
 test("lesson awards use the catalog and require every correct answer", () => {
   expect(lessonReward("lv1", [2, 2, 0, 1, 1])).toBe(1000);

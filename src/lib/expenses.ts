@@ -1,7 +1,7 @@
-import { eq, desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
-import { getDatabase } from "@/lib/database";
-import { expense } from "@/lib/database/schema";
+import { getDatabase } from "#/lib/database";
+import { expense } from "#/lib/database/schema";
 
 export type Expense = typeof expense.$inferSelect;
 

@@ -1,4 +1,4 @@
-import MessageView from "@/components/views/message-view";
+import MessageView from "#/components/views/message-view";
 
 export default function MissingParametersView() {
   return (

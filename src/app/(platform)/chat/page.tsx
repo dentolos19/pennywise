@@ -9,9 +9,9 @@ import clsx from "clsx";
 import { useState } from "react";
 import Markdown from "react-markdown";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import MessageView from "@/components/views/message-view";
-import { onKeyCallback } from "@/lib/utils";
+import { useAuth } from "#/components/contexts/auth-context";
+import MessageView from "#/components/views/message-view";
+import { onKeyCallback } from "#/lib/utils";
 
 function humanizeRole(role: string) {
   switch (role) {
@@ -51,7 +51,7 @@ export default function Page() {
           {chat.messages.map((message) => (
             <Paper
               key={message.id}
-              className={clsx("p-4 w-fit flex gap-4", message.role === "user" && "flex-row-reverse self-end text-end")}
+              className={clsx("flex w-fit gap-4 p-4", message.role === "user" && "flex-row-reverse self-end text-end")}
             >
               <Box>
                 <Avatar className={"size-[35px]"}>X</Avatar>

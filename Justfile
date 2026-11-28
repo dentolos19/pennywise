@@ -5,9 +5,9 @@ set dotenv-override
 environment := ""
 dotenv_file := if environment == "" { ".env" } else { ".env." + environment }
 
-setup mode="": install compose
-    just --no-deps environment={{ quote(environment) }} migrate
-    if [ "{{ mode }}" != "prerun" ]; then just decompose; fi
+setup: install
+    just environment={{ quote(environment) }} migrate
+    just environment={{ quote(environment) }} decompose
 
 install:
     bun install --frozen-lockfile

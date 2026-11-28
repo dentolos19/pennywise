@@ -1,9 +1,9 @@
 import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
 
 export default function LoginView() {
   const auth = useAuth();
@@ -36,7 +36,8 @@ export default function LoginView() {
         typeof email !== "string" ||
         typeof password !== "string" ||
         typeof confirmPassword !== "string"
-      ) throw new Error("Invalid registration data.");
+      )
+        throw new Error("Invalid registration data.");
       if (password !== confirmPassword) {
         toast.show({ message: "Passwords do not match.", severity: "error" });
         return;

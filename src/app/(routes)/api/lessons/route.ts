@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import lessons from "@/data/lessons.json";
+import lessons from "#/data/lessons.json";
 
 export function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");

@@ -7,14 +7,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-import LoadingPage from "@/app/(platform)/loading";
-import { deleteExpenseAction, getExpenseAction, updateExpenseAction } from "@/app/(platform)/tracker/actions";
-import NotFoundPage from "@/app/not-found";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
-import MessageView from "@/components/views/message-view";
-import type { Expense } from "@/lib/expenses";
+import LoadingPage from "#/app/(platform)/loading";
+import { deleteExpenseAction, getExpenseAction, updateExpenseAction } from "#/app/(platform)/tracker/actions";
+import NotFoundPage from "#/app/not-found";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
+import MessageView from "#/components/views/message-view";
+import type { Expense } from "#/lib/expenses";
 
 const ExpenseSchema = z.object({
   name: z.string(),

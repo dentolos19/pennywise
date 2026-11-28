@@ -3,8 +3,8 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
 
-import LessonsTab from "@/app/(platform)/learn/_components/lessons-tab";
-import ResourcesTab from "@/app/(platform)/learn/_components/resources-tab";
+import LessonsTab from "#/app/(platform)/learn/_components/lessons-tab";
+import ResourcesTab from "#/app/(platform)/learn/_components/resources-tab";
 
 export default function Page() {
   const [tab, setTab] = useState<string>("lessons");

@@ -1,7 +1,7 @@
 "use server";
 
-import { requireUserId } from "@/lib/auth";
-import { createPost, deletePost, getPost, getPostsWithUsers, updatePost, type Post } from "@/lib/posts";
+import { requireUserId } from "#/lib/auth";
+import { createPost, deletePost, getPost, getPostsWithUsers, type Post, updatePost } from "#/lib/posts";
 
 type PostInput = {
   content: string;

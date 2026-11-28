@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/client";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 
-import type { AppAuth } from "@/lib/auth";
+import type { AppAuth } from "#/lib/auth";
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL || "",

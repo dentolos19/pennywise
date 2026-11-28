@@ -26,15 +26,15 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { getExpensesAction } from "@/app/(platform)/tracker/actions";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
-import LoadingView from "@/components/views/loading-view";
-import MessageView from "@/components/views/message-view";
-import MissingParametersView from "@/components/views/missing-parameters-view";
-import { authClient } from "@/lib/auth-client";
-import type { Expense } from "@/lib/expenses";
+import { getExpensesAction } from "#/app/(platform)/tracker/actions";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
+import LoadingView from "#/components/views/loading-view";
+import MessageView from "#/components/views/message-view";
+import MissingParametersView from "#/components/views/missing-parameters-view";
+import { authClient } from "#/lib/auth-client";
+import type { Expense } from "#/lib/expenses";
 
 function filterMonth(target: dayjs.Dayjs) {
   const now = dayjs();

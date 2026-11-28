@@ -1,7 +1,7 @@
-import { eq, desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
-import { getDatabase } from "@/lib/database";
-import { post } from "@/lib/database/schema";
+import { getDatabase } from "#/lib/database";
+import { post } from "#/lib/database/schema";
 
 export type Post = typeof post.$inferSelect;
 export type PostWithUser = Awaited<ReturnType<typeof getPostsWithUsers>>[number];

@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { completeLessonAction } from "@/app/(platform)/learn/actions";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import LoadingView from "@/components/views/loading-view";
-import NotFoundView from "@/components/views/not-found-view";
-import { timeout } from "@/lib/utils";
+import { completeLessonAction } from "#/app/(platform)/learn/actions";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import LoadingView from "#/components/views/loading-view";
+import NotFoundView from "#/components/views/not-found-view";
+import { timeout } from "#/lib/utils";
 
 type Lesson = {
   id: string;

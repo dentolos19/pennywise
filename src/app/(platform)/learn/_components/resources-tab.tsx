@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 
-import ResourceItem from "@/app/(platform)/learn/_components/resource-item";
-import resources from "@/data/resources.json";
+import ResourceItem from "#/app/(platform)/learn/_components/resource-item";
+import resources from "#/data/resources.json";
 
 export default function ResourcesTab() {
   return (

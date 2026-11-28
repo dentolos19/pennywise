@@ -1,5 +1,6 @@
-import { strict as assert } from "node:assert";
 import { mock } from "bun:test";
+import { strict as assert } from "node:assert";
+
 import { PgDialect } from "drizzle-orm/pg-core";
 
 const dialect = new PgDialect();

@@ -5,11 +5,11 @@ import { Box, Fab, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import PostItem from "@/app/(platform)/community/_components/post-item";
-import { getPostsWithUsersAction } from "@/app/(platform)/community/actions";
-import LoadingView from "@/components/views/loading-view";
-import MessageView from "@/components/views/message-view";
-import type { PostWithUser } from "@/lib/posts";
+import PostItem from "#/app/(platform)/community/_components/post-item";
+import { getPostsWithUsersAction } from "#/app/(platform)/community/actions";
+import LoadingView from "#/components/views/loading-view";
+import MessageView from "#/components/views/message-view";
+import type { PostWithUser } from "#/lib/posts";
 
 export default function Page() {
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,11 @@ export default function Page() {
           <Typography className={"mt-16 text-center"}>Get started by creating a new post!</Typography>
         )}
         {posts.map((post) => (
-          <PostItem key={post.id} data={post} onDeleted={() => setPosts((current) => current.filter((item) => item.id !== post.id))} />
+          <PostItem
+            key={post.id}
+            data={post}
+            onDeleted={() => setPosts((current) => current.filter((item) => item.id !== post.id))}
+          />
         ))}
       </Stack>
       <Fab LinkComponent={Link} className={"fixed right-4 bottom-4 md:right-8 md:bottom-8"} href={"/community/post"}>

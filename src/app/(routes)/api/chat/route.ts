@@ -9,7 +9,7 @@ import {
 import { env } from "cloudflare:workers";
 import { NextResponse } from "next/server";
 
-import { getAuth } from "@/lib/auth";
+import { getAuth } from "#/lib/auth";
 
 export const maxDuration = 30;
 

@@ -1,5 +1,5 @@
-import lessons from "@/data/lessons.json";
-import items from "@/data/shop.json";
+import lessons from "#/data/lessons.json";
+import items from "#/data/shop.json";
 
 export function lessonReward(id: unknown, answers: unknown) {
   const lesson = lessons.find((item) => item.id === id);

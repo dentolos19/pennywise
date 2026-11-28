@@ -2,7 +2,7 @@ import { neon, neonConfig } from "@neondatabase/serverless";
 import { env } from "cloudflare:workers";
 import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
 
-import * as schema from "@/lib/database/schema";
+import * as schema from "#/lib/database/schema";
 
 let _db: NeonHttpDatabase<typeof schema> | null = null;
 

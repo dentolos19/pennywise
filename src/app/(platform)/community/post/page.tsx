@@ -3,10 +3,10 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-import { createPostAction } from "@/app/(platform)/community/actions";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
+import { createPostAction } from "#/app/(platform)/community/actions";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
 
 export default function Page() {
   const router = useRouter();

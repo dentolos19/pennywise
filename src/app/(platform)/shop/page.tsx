@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
-import ShopItem from "@/app/(platform)/shop/_components/shop-item";
-import items from "@/data/shop.json";
+import ShopItem from "#/app/(platform)/shop/_components/shop-item";
+import items from "#/data/shop.json";
 
 export default function Page() {
   return (

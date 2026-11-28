@@ -6,9 +6,9 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import AuthProvider from "@/components/contexts/auth-context";
-import ToastProvider from "@/components/contexts/toast-context";
-import theme from "@/theme";
+import AuthProvider from "#/components/contexts/auth-context";
+import ToastProvider from "#/components/contexts/toast-context";
+import theme from "#/theme";
 
 export default function AppProvider(props: { children: React.ReactNode }) {
   return (

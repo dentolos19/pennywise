@@ -1,7 +1,7 @@
 "use server";
 
-import { requireUserId } from "@/lib/auth";
-import { createExpense, deleteExpense, getExpense, getExpenses, updateExpense, type Expense } from "@/lib/expenses";
+import { requireUserId } from "#/lib/auth";
+import { createExpense, deleteExpense, type Expense, getExpense, getExpenses, updateExpense } from "#/lib/expenses";
 
 type ExpenseInput = {
   name: string;

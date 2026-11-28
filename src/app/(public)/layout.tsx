@@ -1,6 +1,6 @@
 import { AppBar, Box, Button, Link, Toolbar } from "@mui/material";
 
-import { LayoutProps } from "@/types";
+import { LayoutProps } from "#/types";
 
 export default function Layout(props: LayoutProps) {
   return (

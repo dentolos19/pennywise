@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { env } from "cloudflare:workers";
 import { headers } from "next/headers";
 
-import { getDatabase } from "@/lib/database";
+import { getDatabase } from "#/lib/database";
 
 function createAuth() {
   return betterAuth({

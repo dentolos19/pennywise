@@ -2,10 +2,10 @@
 
 import { and, eq, gte, sql } from "drizzle-orm";
 
-import { requireUserId } from "@/lib/auth";
-import { getDatabase } from "@/lib/database";
-import { user } from "@/lib/database/schema";
-import { itemCost } from "@/lib/rewards";
+import { requireUserId } from "#/lib/auth";
+import { getDatabase } from "#/lib/database";
+import { user } from "#/lib/database/schema";
+import { itemCost } from "#/lib/rewards";
 
 export async function redeemItemAction(name: string) {
   const userId = await requireUserId("You must be logged in to redeem items.");

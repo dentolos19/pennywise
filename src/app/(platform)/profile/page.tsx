@@ -4,9 +4,9 @@ import { Avatar, Box, Button, ButtonGroup, Paper, Typography } from "@mui/materi
 import { blue } from "@mui/material/colors";
 import { useRouter } from "next/navigation";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import MissingParametersView from "@/components/views/missing-parameters-view";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import MissingParametersView from "#/components/views/missing-parameters-view";
 
 export default function Page() {
   const router = useRouter();

@@ -25,9 +25,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useAuth } from "@/components/contexts/auth-context";
-import LoadingView from "@/components/views/loading-view";
-import LoginView from "@/components/views/login-view";
+import { useAuth } from "#/components/contexts/auth-context";
+import LoadingView from "#/components/views/loading-view";
+import LoginView from "#/components/views/login-view";
 
 const links = [
   {

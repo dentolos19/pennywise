@@ -2,10 +2,10 @@
 
 import { Button, Card, CardActions, CardContent, CardMedia, Chip, Typography } from "@mui/material";
 
-import { redeemItemAction } from "@/app/(platform)/shop/actions";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
+import { redeemItemAction } from "#/app/(platform)/shop/actions";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
 
 export default function ShopItem(props: { name: string; description?: string; points: number; imageUrl: string }) {
   const auth = useAuth();

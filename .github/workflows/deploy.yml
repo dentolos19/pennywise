@@ -37,6 +37,7 @@ jobs:
           envkey_BETTER_AUTH_SECRET: ${{ toJSON(secrets.BETTER_AUTH_SECRET) }}
           envkey_BETTER_AUTH_URL: ${{ toJSON(vars.BETTER_AUTH_URL) }}
           envkey_DATABASE_URL: ${{ toJSON(secrets.DATABASE_URL) }}
+          envkey_NEXT_PUBLIC_APP_URL: ${{ toJSON(vars.NEXT_PUBLIC_APP_URL) }}
           envkey_OPENROUTER_API_KEY: ${{ toJSON(secrets.OPENROUTER_API_KEY) }}
           envkey_OPENROUTER_MODEL: ${{ toJSON(vars.OPENROUTER_MODEL) }}
           envkey_OPENROUTER_REFERER: ${{ toJSON(vars.OPENROUTER_REFERER) }}

@@ -4,14 +4,14 @@ import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { deletePostAction, getPostAction, updatePostAction } from "@/app/(platform)/community/actions";
-import LoadingPage from "@/app/(platform)/loading";
-import NotFoundPage from "@/app/not-found";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
-import MessageView from "@/components/views/message-view";
-import type { Post } from "@/lib/posts";
+import { deletePostAction, getPostAction, updatePostAction } from "#/app/(platform)/community/actions";
+import LoadingPage from "#/app/(platform)/loading";
+import NotFoundPage from "#/app/not-found";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
+import MessageView from "#/components/views/message-view";
+import type { Post } from "#/lib/posts";
 
 export default function Page() {
   const { id } = useParams<{ id: string }>();

@@ -6,10 +6,10 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 
-import { createExpenseAction } from "@/app/(platform)/tracker/actions";
-import { useAuth } from "@/components/contexts/auth-context";
-import { useToast } from "@/components/contexts/toast-context";
-import FormStatus from "@/components/ui/form-status";
+import { createExpenseAction } from "#/app/(platform)/tracker/actions";
+import { useAuth } from "#/components/contexts/auth-context";
+import { useToast } from "#/components/contexts/toast-context";
+import FormStatus from "#/components/ui/form-status";
 
 const ExpenseSchema = z.object({
   name: z.string(),
